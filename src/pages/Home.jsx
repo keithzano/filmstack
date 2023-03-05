@@ -4,6 +4,7 @@ import { MovieCard } from "../components/MovieCard";
 
 import { originalImage } from "../api/apiConfig";
 import { getDiscoverMovies } from "../api/apiCalls";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 export const Home = () => {
   const {
@@ -15,9 +16,6 @@ export const Home = () => {
   if (isLoading) return <div>Loading...</div>;
 
   if (isError) return <div>Error fetching movies</div>;
-
-  const renderMovies = () =>
-    movies.map((movie) => <MovieCard key={movie.id} movie={movie} />);
 
   return (
     <Container maxWidth="xl">
@@ -31,9 +29,30 @@ export const Home = () => {
           margin: "16px auto",
         }}
       ></Box>
-      <Grid container spacing={2}>
-        {renderMovies()}
-      </Grid>
+      <Swiper
+        spaceBetween={16}
+        freeMode={true}
+        breakpoints={{
+          1024: {
+            slidesPerView: 6,
+          },
+          768: {
+            slidesPerView: 5,
+          },
+          480: {
+            slidesPerView: 3,
+          },
+          0: {
+            slidesPerView: 2,
+          },
+        }}
+      >
+        {movies.map((movie) => (
+          <SwiperSlide key={movie.id}>
+            <MovieCard movie={movie} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </Container>
   );
 };

@@ -2,6 +2,7 @@ import { Pages } from "./pages";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import 'swiper/css';
 
 const darkBlueTheme = createTheme({
   palette: {
