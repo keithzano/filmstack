@@ -5,8 +5,6 @@ import { MovieCard } from "../components/MovieCard";
 import { originalImage } from "../api/apiConfig";
 import { getDiscoverMovies } from "../api/apiCalls";
 
-console.log(originalImage("hey"));
-
 export const Home = () => {
   const {
     data: movies,
@@ -20,8 +18,6 @@ export const Home = () => {
 
   const renderMovies = () =>
     movies.map((movie) => <MovieCard key={movie.id} movie={movie} />);
-
-  console.log(originalImage(movies[0].backdrop_path));
 
   return (
     <Container maxWidth="xl">

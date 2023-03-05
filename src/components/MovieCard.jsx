@@ -1,16 +1,23 @@
 import { Box, Grid, Paper, Rating, Typography, useTheme } from "@mui/material";
-import { Link } from "react-router-dom";
 import { w500Image } from "../api/apiConfig";
+import { useNavigate } from "react-router-dom";
 
 export const MovieCard = ({ movie }) => {
-  const movieURL = `${movie.title.toLowerCase().split(" ").join("-")}`;
+  const navigate = useNavigate();
+  const handleClick = (movieURL) => {
+    navigate(`/movies/${movieURL}`, { replace: true });
+  };
+  const movieURL = `${movie.id}/${movie.title
+    .toLowerCase()
+    .split(" ")
+    .join("-")}`;
   const theme = useTheme();
   return (
     <Grid item lg={2} md={4} xs={6}>
-      <Link
-        to={`movies/${movieURL}`}
-        state={{
-          movie: movie,
+      <Box
+        onClick={() => handleClick(movieURL)}
+        style={{
+          cursor: "pointer",
         }}
       >
         <Paper
@@ -22,20 +29,21 @@ export const MovieCard = ({ movie }) => {
           src={w500Image(movie.poster_path)}
           alt={movie.title}
         />
-      </Link>
+      </Box>
 
       <Box>
-        <Link
-          to={`movies/${movieURL}`}
-          state={{
-            movie: movie,
+        <Box
+          onClick={() => handleClick(movieURL)}
+          style={{
+            textDecoration: "none",
+            cursor: "pointer",
+            color: theme.palette.text.primary,
           }}
-          style={{ textDecoration: "none", color: theme.palette.text.primary }}
         >
           <Typography variant="subtitle2" component="h2">
             {movie.title}
           </Typography>
-        </Link>
+        </Box>
         <Rating
           name="movie-rating"
           defaultValue={movie.vote_average / 2}

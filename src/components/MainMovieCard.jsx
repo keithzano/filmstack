@@ -7,7 +7,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { getMovieDetails } from "../api/apiCalls";
@@ -19,45 +19,26 @@ export const Movie = () => {
   const navigate = useNavigate();
   const { movieId } = useParams();
   const [selectedMovie, setSelectedMovie] = useState();
-  const [ratingValue, setRatingValue] = useState();
 
   const {
     data: movieDetails,
     isLoading,
     isError,
-  } = useQuery(["movieDetails", movieId], () => getMovieDetails(movieId), {
-    onSuccess: (movieDetails) => {
-      setSelectedMovie(movieDetails);
-      setRatingValue(movieDetails?.vote_average / 2);
+    refetch,
+  } = useQuery("movieDetails", () => getMovieDetails(movieId), {
+    onSuccess: (data) => {
+      setSelectedMovie(data);
     },
   });
-  const { similar: { results: similarMoviez } = {} } = movieDetails || {};
-  const similarMovies = similarMoviez?.slice(0, 4);
 
-  const handleMovieClick = async (similarMovie) => {
-    const { id, title, poster_path, vote_average, overview, backdrop_path } =
-      similarMovie;
-    setSelectedMovie({
-      id,
-      title,
-      poster_path,
-      vote_average,
-      overview,
-      backdrop_path,
-    });
+  useEffect(() => {
+    if (movieDetails) {
+      setSelectedMovie(movieDetails);
+    }
+    console.log("I just mounted");
+  }, [movieDetails]);
 
-    const updatedMovieDetails = await getMovieDetails(id);
-    setSelectedMovie((prev) => ({ ...prev, ...updatedMovieDetails }));
-    setRatingValue(selectedMovie?.vote_average / 2);
-
-    const movieURL = `/movies/${id}/${title
-      .toLowerCase()
-      .split(" ")
-      .join("-")}`;
-    navigate(movieURL, { replace: true });
-  };
-
-  console.log(selectedMovie);
+  const { similar: { results: similarMovies } = {} } = movieDetails || {};
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -65,6 +46,18 @@ export const Movie = () => {
 
   if (isError) return <div>Error fetching movies</div>;
 
+  const handleMovieClick = async (similarMovie) => {
+    const { id, title } = similarMovie;
+    const updatedMovieDetails = await getMovieDetails(id);
+    setSelectedMovie({ ...selectedMovie, id, title });
+    setSelectedMovie((prev) => ({ ...prev, ...updatedMovieDetails }));
+    const movieURL = `/movies/${id}/${title
+      .toLowerCase()
+      .split(" ")
+      .join("-")}`;
+    navigate(movieURL, { replace: true });
+  };
+  console.log(selectedMovie);
   return (
     <>
       <Box
@@ -126,14 +119,12 @@ export const Movie = () => {
                   <Stack direction="row" spacing={2}>
                     <Rating
                       name="movie-rating"
-                      defaultValue={ratingValue}
+                      defaultValue={selectedMovie?.vote_average / 2}
                       precision={0.1}
                       size="small"
                       readOnly
                     />
-                    <Typography>
-                      ({selectedMovie?.vote_average.toFixed(1)})
-                    </Typography>
+                    <Typography>({selectedMovie?.vote_average})</Typography>
                   </Stack>
                   <Typography variant="h4" component="h3" color="white">
                     Plot summary

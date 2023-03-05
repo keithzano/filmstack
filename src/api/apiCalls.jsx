@@ -16,16 +16,72 @@ export const getDiscoverMovies = async () => {
   return results;
 };
 
-export const getSimilarMovies = async (movieId) => {
+export const getNowPlayingMovies = async () => {
   const {
     data: { results },
-  } = await axios.get(`${baseURL}/movie/${movieId}/similar`, {
+  } = await axios.get(`${baseURL}/movie/now_playing`, {
     params: {
       api_key: api_key,
+      sort_by: "popularity.desc",
+      include_adult: "false",
       language: "en-US",
       page: 1,
-      page_size: 4,
     },
   });
-  return results.slice(0, 4);
+  return results;
+};
+
+export const getTopRatedMovies = async () => {
+  const {
+    data: { results },
+  } = await axios.get(`${baseURL}/movie/top_rated`, {
+    params: {
+      api_key: api_key,
+      sort_by: "popularity.desc",
+      include_adult: "false",
+      language: "en-US",
+      page: 1,
+    },
+  });
+  return results;
+};
+
+export const getUpcomingMovies = async () => {
+  const {
+    data: { results },
+  } = await axios.get(`${baseURL}/movie/upcoming`, {
+    params: {
+      api_key: api_key,
+      sort_by: "popularity.desc",
+      include_adult: "false",
+      language: "en-US",
+      page: 1,
+    },
+  });
+  return results;
+};
+
+export const getPopularMovies = async () => {
+  const {
+    data: { results },
+  } = await axios.get(`${baseURL}/movie/popular`, {
+    params: {
+      api_key: api_key,
+      sort_by: "popularity.desc",
+      include_adult: "false",
+      language: "en-US",
+      page: 1,
+    },
+  });
+  return results;
+};
+
+export const getMovieDetails = async (movieId) => {
+  const { data } = await axios.get(`${baseURL}/movie/${movieId}`, {
+    params: {
+      api_key: api_key,
+      append_to_response: "videos,recommendations,similar",
+    },
+  });
+  return data;
 };
