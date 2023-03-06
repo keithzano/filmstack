@@ -1,4 +1,4 @@
-import { Grid, Paper, y } from "@mui/material";
+import { Paper } from "@mui/material";
 import { customWidthImage } from "../api/apiConfig";
 
 export const SimilarMoviesCard = ({ similarMovie }) => {

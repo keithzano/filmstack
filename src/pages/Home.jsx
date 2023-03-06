@@ -1,17 +1,36 @@
-import { Container, Grid, Box } from "@mui/material";
-import { useQuery } from "react-query";
-import { MovieCard } from "../components/MovieCard";
+import { Container, Typography, Box } from "@mui/material";
+import { useQueries } from "react-query";
 
 import { originalImage } from "../api/apiConfig";
-import { getDiscoverMovies } from "../api/apiCalls";
-import { Swiper, SwiperSlide } from "swiper/react";
+import {
+  getDiscoverMovies,
+  getPopularMovies,
+  getTopRatedMovies,
+} from "../api/apiCalls";
+import { MovieSwiper } from "../components/MovieSwiper";
 
 export const Home = () => {
-  const {
-    data: movies,
-    isLoading,
-    isError,
-  } = useQuery("discoverMovies", getDiscoverMovies);
+  const [
+    { data: movies, isLoading, isError },
+    { data: popularMovies },
+    { data: topRatedMovies },
+  ] = useQueries([
+    {
+      queryKey: ["discoverMovies"],
+      queryFn: getDiscoverMovies,
+    },
+    {
+      queryKey: ["popularMovies"],
+      queryFn: getPopularMovies,
+    },
+    {
+      queryKey: "topRatedMovies",
+      queryFn: getTopRatedMovies,
+    },
+  ]);
+
+  console.log("Popular Movies", popularMovies);
+  console.log("Top Rated Movies", topRatedMovies);
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -21,38 +40,36 @@ export const Home = () => {
     <Container maxWidth="xl">
       <Box
         sx={{
-          backgroundImage: `url(${originalImage(movies[0].backdrop_path)})`,
+          backgroundImage: `url(${originalImage(movies[0]?.backdrop_path)})`,
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundPosition: "center center",
           minHeight: "60vh",
           margin: "16px auto",
+          borderRadius: "8px",
         }}
       ></Box>
-      <Swiper
-        spaceBetween={16}
-        freeMode={true}
-        breakpoints={{
-          1024: {
-            slidesPerView: 6,
-          },
-          768: {
-            slidesPerView: 5,
-          },
-          480: {
-            slidesPerView: 3,
-          },
-          0: {
-            slidesPerView: 2,
-          },
-        }}
-      >
-        {movies.map((movie) => (
-          <SwiperSlide key={movie.id}>
-            <MovieCard movie={movie} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
+
+      <Box>
+        <Typography variant="h6" my={2}>
+          Top Rated Movies
+        </Typography>
+        <MovieSwiper movies={topRatedMovies} />
+      </Box>
+
+      <Box>
+        <Typography variant="h6" my={2}>
+          Popular Movies
+        </Typography>
+        <MovieSwiper movies={popularMovies} />
+      </Box>
+
+      <Box>
+        <Typography variant="h6" my={2}>
+          Discover Movies
+        </Typography>
+        <MovieSwiper movies={movies} />
+      </Box>
     </Container>
   );
 };
