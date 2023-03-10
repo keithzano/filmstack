@@ -80,7 +80,7 @@ export const getMovieDetails = async (movieId) => {
   const { data } = await axios.get(`${baseURL}/movie/${movieId}`, {
     params: {
       api_key: api_key,
-      append_to_response: "videos,recommendations,similar",
+      append_to_response: "videos,recommendations,similar,reviews,credits",
     },
   });
   return data;

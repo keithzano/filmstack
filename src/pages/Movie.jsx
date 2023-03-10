@@ -4,7 +4,9 @@ import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { getMovieDetails } from "../api/apiCalls";
 import { originalImage } from "../api/apiConfig";
+import { MovieCast } from "../components/Cast";
 import { MovieDetails } from "../components/MovieDetails";
+import { MovieReviews } from "../components/MovieReviews";
 import { MovieSwiper } from "../components/MovieSwiper";
 
 import { SimilarMoviesCard } from "../components/SimilarMoviesCard";
@@ -26,8 +28,6 @@ export const Movie = () => {
     },
   });
   const similarMovies = movieDetails?.similar?.results?.slice(0, 4) ?? [];
-  const { recommendations: { results: recommendedMovies } = {} } =
-    movieDetails || {};
 
   const handleMovieClick = async (similarMovie) => {
     const { id, title, poster_path, vote_average, overview, backdrop_path } =
@@ -54,7 +54,11 @@ export const Movie = () => {
 
   if (isError) return <div>Error fetching movies</div>;
   console.log(selectedMovie);
-
+  const { recommendations: { results: recommendedMovies } = {} } =
+    selectedMovie || {};
+  const { credits: { cast } = {} } = selectedMovie || {};
+  const { reviews: { results: movieReviews } = {} } = selectedMovie || {};
+  console.log(movieReviews);
   return (
     <>
       <Box
@@ -120,7 +124,9 @@ export const Movie = () => {
           },
         }}
       >
-        <Typography variant="h4" color="white" my={2}>
+        <MovieCast cast={cast} />
+        <MovieReviews reviews={movieReviews} />
+        <Typography variant="h4" color="white" my={3}>
           Recommended Movies
         </Typography>
         <MovieSwiper movies={recommendedMovies} />

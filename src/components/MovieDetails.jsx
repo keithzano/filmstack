@@ -24,7 +24,9 @@ export const MovieDetails = ({ selectedMovie, ratingValue }) => {
     const trailer = selectedMovie?.videos?.results.find(
       (vid) =>
         vid.name.includes("Official Trailer") ||
+        vid.name.includes("Trailer") ||
         vid.name.includes("trailer") ||
+        vid.name.includes("Official") ||
         vid.name.includes("official")
     );
     if (trailer) {

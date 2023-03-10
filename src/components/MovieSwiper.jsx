@@ -1,11 +1,14 @@
+import SwiperCore, { FreeMode, Scrollbar } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { MovieCard } from "../components/MovieCard";
 
 export const MovieSwiper = ({ movies }) => {
+  SwiperCore.use([FreeMode, Scrollbar]);
   return (
     <Swiper
       spaceBetween={16}
       freeMode={true}
+      scrollbar={true}
       breakpoints={{
         1024: {
           slidesPerView: 6.5,
