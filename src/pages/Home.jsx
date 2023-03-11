@@ -8,6 +8,7 @@ import {
   getTopRatedMovies,
 } from "../api/apiCalls";
 import { MovieSwiper } from "../components/MovieSwiper";
+import { SearchMovies } from "../components/SearchMovies";
 
 export const Home = () => {
   const [
@@ -29,9 +30,6 @@ export const Home = () => {
     },
   ]);
 
-  console.log("Popular Movies", popularMovies);
-  console.log("Top Rated Movies", topRatedMovies);
-
   if (isLoading) return <div>Loading...</div>;
 
   if (isError) return <div>Error fetching movies</div>;
@@ -48,7 +46,9 @@ export const Home = () => {
           margin: "16px auto",
           borderRadius: "8px",
         }}
-      ></Box>
+      >
+        <SearchMovies />
+      </Box>
 
       <Box>
         <Typography variant="h6" my={2}>
