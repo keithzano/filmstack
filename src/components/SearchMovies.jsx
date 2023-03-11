@@ -36,17 +36,21 @@ export const SearchMovies = () => {
     />
   );
 
+  const renderOption = (props, option, { selected }) => (
+    <Grid container spacing={2}>
+      <Grid item>
+        <MovieCard movie={option} />
+      </Grid>
+    </Grid>
+  );
+
   return (
     <Autocomplete
       options={movieOptions}
       getOptionSelected={(option, value) => option.id === value.id}
       getOptionLabel={(option) => option.title}
       renderInput={renderInput}
-      renderOption={(props, option, { selected }) => (
-        <Grid container spacing={2}>
-          <MovieCard movie={option} />
-        </Grid>
-      )}
+      renderOption={renderOption}
       onInputChange={getSearchedMovies}
     />
   );
