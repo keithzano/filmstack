@@ -1,57 +1,61 @@
-import { useState } from "react";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import Slide from "@mui/material/Slide";
+import { Box, TextField, Grid } from "@mui/material";
 import { searchMovies } from "../api/apiCalls";
-import { customWidthImage } from "../api/apiConfig";
 import { MovieCard } from "./MovieCard";
-import { Grid } from "@mui/material";
+import { forwardRef, useRef, useState } from "react";
 
-export const SearchMovies = () => {
-  const [movieOptions, setMovieOptions] = useState([]);
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export const SearchMovies = ({ isDialogOpen, handleDialogClose }) => {
+  const [movies, setMovies] = useState([]);
+
+  const inputRef = useRef(null);
 
   const getSearchedMovies = async (e) => {
     const data = await searchMovies(e.target.value);
-    const opt = data.results;
-    if (data?.results) {
-      setMovieOptions(opt instanceof Array ? opt : [opt]); // ensure that opt is always an array
-    } else {
-      setMovieOptions([]);
-    }
+    const { results: movies } = data || {};
+    setMovies(movies);
   };
 
-  const renderInput = (params) => (
-    <TextField
-      {...params}
-      label="Search Movies"
-      variant="outlined"
-      InputProps={{
-        ...params.InputProps,
-        type: "search",
-      }}
-    />
-  );
-
-  const renderOption = (props, option, { selected }) => (
-    <Grid container spacing={2}>
-      <Grid item>
-        <MovieCard movie={option} />
-      </Grid>
-    </Grid>
-  );
-
+  const handleDialogOpen = () => {
+    setMovies([]);
+    inputRef.current.focus();
+  };
   return (
-    <Autocomplete
-      options={movieOptions}
-      getOptionSelected={(option, value) => option.id === value.id}
-      getOptionLabel={(option) => option.title}
-      renderInput={renderInput}
-      renderOption={renderOption}
-      onInputChange={getSearchedMovies}
-    />
+    <Box>
+      <Button onClick={handleDialogOpen}>Search Movies</Button>
+      <Dialog open={isDialogOpen} onClose={handleDialogClose} fullScreen={true}>
+        <DialogTitle>Search Movies</DialogTitle>
+        <DialogContent>
+          <TextField
+            id="search-movies-dialog-input"
+            label="Search movies"
+            variant="outlined"
+            size="small"
+            fullWidth
+            inputRef={inputRef}
+            onChange={getSearchedMovies}
+          />
+          <Grid container spacing={2}>
+            {movies.map((movie) => (
+              <MovieCard key={movie.id} movie={movie} />
+            ))}
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Cancel</Button>
+          <Button variant="contained" onClick={getSearchedMovies}>
+            Search
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 };

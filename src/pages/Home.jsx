@@ -1,4 +1,5 @@
-import { Container, Typography, Box } from "@mui/material";
+import { useState } from "react";
+import { Container, Typography, Box, TextField } from "@mui/material";
 import { useQueries } from "react-query";
 
 import { originalImage } from "../api/apiConfig";
@@ -30,6 +31,16 @@ export const Home = () => {
     },
   ]);
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleSearchClick = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+  };
+
   if (isLoading) return <div>Loading...</div>;
 
   if (isError) return <div>Error fetching movies</div>;
@@ -45,9 +56,39 @@ export const Home = () => {
           minHeight: "60vh",
           margin: "16px auto",
           borderRadius: "8px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          padding: "32px",
         }}
       >
-        <SearchMovies />
+        <Typography variant="h4" sx={{ marginBottom: "16px" }}>
+          Find your next movie
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            maxWidth: "600px",
+            width: "100%",
+          }}
+        >
+          <TextField
+            id="search-movies-input"
+            label="Search movies"
+            variant="outlined"
+            size="small"
+            fullWidth
+            onClick={handleSearchClick}
+            sx={{ mr: 1 }}
+          />
+          <SearchMovies
+            isDialogOpen={isDialogOpen}
+            handleDialogClose={handleDialogClose}
+          />
+        </Box>
       </Box>
 
       <Box>
@@ -62,13 +103,6 @@ export const Home = () => {
           Popular Movies
         </Typography>
         <MovieSwiper movies={popularMovies} />
-      </Box>
-
-      <Box>
-        <Typography variant="h6" my={2}>
-          Discover Movies
-        </Typography>
-        <MovieSwiper movies={movies} />
       </Box>
     </Container>
   );
